@@ -2,15 +2,15 @@
 
 # Script to install & configure AWS CLI and launch an EC2 instance in Default VPC
 # Author: Hunzala Awan
-# Date: $(date)
+
 
 set -e  # exit on error
-trap 'echo "❌ Error occurred on line $LINENO. Exiting..."; exit 1' ERR
+trap 'echo " Error occurred on line $LINENO. Exiting..."; exit 1' ERR
 
 # =============== FUNCTIONS ===============
 
 install_aws_cli() {
-    echo "🔹 Checking if AWS CLI is installed..."
+    echo "Checking if AWS CLI is installed..."
     if ! command -v aws &>/dev/null; then
         echo "Installing AWS CLI..."
         sudo apt-get update -y
@@ -20,27 +20,27 @@ install_aws_cli() {
         sudo ./aws/install
         rm -rf aws awscliv2.zip
     else
-        echo "✅ AWS CLI already installed"
+        echo " AWS CLI already installed"
     fi
 }
 
 configure_aws_cli() {
-    echo "🔹 Configuring AWS CLI..."
+    echo " Configuring AWS CLI..."
     if [ ! -f ~/.aws/credentials ]; then
         aws configure
     else
-        echo "✅ AWS CLI already configured."
+        echo " AWS CLI already configured."
     fi
 }
 
 create_key_pair() {
-    echo "🔹 Creating EC2 Key Pair..."
+    echo " Creating EC2 Key Pair..."
     KEY_NAME="ec2-key-$(date +%s)"
     aws ec2 create-key-pair --key-name "$KEY_NAME" \
         --query 'KeyMaterial' --output text > "${KEY_NAME}.pem"
 
     chmod 400 "${KEY_NAME}.pem"
-    echo "✅ Key pair created: $KEY_NAME"
+    echo " Key pair created: $KEY_NAME"
     export KEY_NAME
 }
 
@@ -55,7 +55,7 @@ create_security_group() {
         --output text)
 
     if [ "$VPC_ID" == "None" ]; then
-        echo "❌ No default VPC found. Exiting..."
+        echo " No default VPC found. Exiting..."
         exit 1
     fi
 
@@ -65,7 +65,7 @@ create_security_group() {
         --vpc-id "$VPC_ID" \
         --query 'GroupId' --output text)
 
-    echo "✅ Security group created: $SG_ID"
+    echo "Security group created: $SG_ID"
 
     # Allow SSH & HTTP
     aws ec2 authorize-security-group-ingress --group-id "$SG_ID" \
@@ -77,7 +77,7 @@ create_security_group() {
 }
 
 launch_ec2_instance() {
-    echo "🔹 Launching EC2 Instance..."
+    echo " Launching EC2 Instance..."
     INSTANCE_TYPE="t2.micro"
     AMI_ID=$(aws ec2 describe-images \
         --owners amazon \
@@ -94,7 +94,7 @@ launch_ec2_instance() {
         --query 'Instances[0].InstanceId' \
         --output text)
 
-    echo "⏳ Waiting for EC2 instance to start..."
+    echo " Waiting for EC2 instance to start..."
     aws ec2 wait instance-running --instance-ids "$INSTANCE_ID"
 
     PUBLIC_IP=$(aws ec2 describe-instances \
@@ -102,7 +102,7 @@ launch_ec2_instance() {
         --query 'Reservations[0].Instances[0].PublicIpAddress' \
         --output text)
 
-    echo "✅ EC2 Instance launched successfully!"
+    echo " EC2 Instance launched successfully!"
     echo "   Instance ID: $INSTANCE_ID"
     echo "   Public IP: $PUBLIC_IP"
     echo "   SSH Command: ssh -i ${KEY_NAME}.pem ec2-user@${PUBLIC_IP}"
@@ -110,7 +110,7 @@ launch_ec2_instance() {
 
 # =============== MAIN SCRIPT ===============
 
-echo "🚀 Starting AWS EC2 Deployment Script (Default VPC)"
+echo " Starting AWS EC2 Deployment Script"
 
 install_aws_cli
 configure_aws_cli
@@ -118,4 +118,4 @@ create_key_pair
 create_security_group
 launch_ec2_instance
 
-echo "🎉 Deployment Completed Successfully!"
+echo " Deployment Completed Successfully!"
