@@ -37,7 +37,6 @@ shell-scripting/
   - Running the app via Docker Compose (with Nginx, Django, and DB containers)  
 - Includes error handling for dependency installation & container failures  
 
-👉 [See Project Details](./django-deployment/README.md)
 
 ---
 
@@ -49,7 +48,6 @@ shell-scripting/
 - Handles errors gracefully  
 - Provides cleanup commands to terminate instance, delete security group, and remove key pair  
 
-👉 [See Project Details](./aws-ec2-automation/README.md)
 
 ---
 
