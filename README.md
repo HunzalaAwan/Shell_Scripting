@@ -12,8 +12,8 @@ Each project is structured in its own folder with dedicated scripts and document
 
 shell-scripting/
 │
-├── django-deployment/     # Automates deployment of a Django Notes App with Docker & Docker Compose
-│   ├── deploy.sh
+├── Django-App-deployment/     # Automates deployment of a Django Notes App with Docker & Docker Compose
+│   ├── deploy_django_app.sh
 │   ├── docker-compose.yml
 │   └── README.md
 │
@@ -78,8 +78,8 @@ cd shell-scripting
 Navigate to any project folder and run the scripts:
 
 ```bash
-cd django-deployment
-./deploy.sh
+cd Django-App-Deployment
+./deploy_django_app.sh
 ```
 
 ---
