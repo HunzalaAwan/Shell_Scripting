@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Deploy Django Notes App with error handling
+# Deploy Django Notes App with error handling using Docker Compose
 
 Code_clone() {
     echo "Cloning the Repo"
@@ -16,7 +16,6 @@ Code_clone() {
 install_requirements() {
     echo "Installing Dependencies"
 
-    # Update and install dependencies
     sudo apt-get update -y
 
     # Install Docker 
@@ -29,21 +28,28 @@ install_requirements() {
         echo "Docker already installed"
     fi
 
-    # Ensuring Docker is running
+    # Ensure Docker is running
     sudo systemctl start docker
     sudo systemctl enable docker
 
-    # Installing  Nginx
-    sudo apt-get install nginx -y
-    sudo systemctl enable nginx
+    # Install Docker Compose plugin
+    if ! command -v docker compose &> /dev/null; then
+        echo "Docker Compose not found. Installing..."
+        sudo apt-get install docker-compose-plugin -y
+    else
+        echo "Docker Compose already installed"
+    fi
+
 }
 
 deploy() {
-    echo "Deploying Docker Container..."
-    docker build -t notes-app-image .
-    docker run -d -p 8000:8000 notes-app-image:latest
+    docker build -t notes-app .
+    echo "Deploying with Docker Compose..."
+    docker compose up --build -d
 }
 
+
+# Main Script
 echo "************** Deployment Started *************"
 
 Code_clone
