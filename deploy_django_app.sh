@@ -59,6 +59,9 @@ if ! install_requirements; then
     exit 1
 fi
 
-deploy
+if ! deploy; then
+   echo "Deployment Failed"
+   exit 1
+fi
 
 echo "************** Deployment Completed *************"
